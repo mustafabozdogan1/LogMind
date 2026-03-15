@@ -1,0 +1,5 @@
+2026-03-15 INFO User login successful
+2026-03-15 ERROR Database connection failed
+2026-03-15 WARNING Disk space low
+2026-03-15 ERROR API timeout
+2026-03-15 INFO User logout
