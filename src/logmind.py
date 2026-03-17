@@ -1,34 +1,36 @@
-from parser import read_log
-from analyzer import analyze_lines, most_common_error
-from reporter import print_report, save_report
 import sys
+from parser import parse_log
+from analyzer import analyze_logs, find_top_errors
+from reporter import (
+    print_report,
+    save_json_report,
+    save_chart,
+    save_top_errors_chart,
+    save_timeline_chart
+)
 
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python src/logmind.py <logfile> [LOGLEVEL]")
+        print("Usage: python src/logmind.py <logfile>")
         return
 
     log_file = sys.argv[1]
 
-    log_level = None
-    if len(sys.argv) > 2:
-        log_level = sys.argv[2]
+    lines = parse_log(log_file)
 
-    try:
-        lines = read_log(log_file)
-    except FileNotFoundError:
-        print("Error: Log file not found.")
-        return
+    error_count, warning_count, info_count = analyze_logs(lines)
+    top_errors = find_top_errors(lines)
 
-    if log_level:
-        lines = [line for line in lines if log_level in line]
+    print_report(error_count, warning_count, info_count, top_errors)
 
-    error_count, warning_count, info_count = analyze_lines(lines)
-    common_error = most_common_error(lines)
+    save_json_report(error_count, warning_count, info_count, top_errors)
 
-    print_report(error_count, warning_count, info_count, common_error)
-    save_report(error_count, warning_count, info_count, common_error)
+    save_chart(error_count, warning_count, info_count)
+
+    save_top_errors_chart(top_errors)
+
+    save_timeline_chart(lines)
 
 
 if __name__ == "__main__":

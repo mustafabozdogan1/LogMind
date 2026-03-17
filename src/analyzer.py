@@ -1,4 +1,4 @@
-def analyze_lines(lines):
+def analyze_logs(lines):
     error_count = 0
     warning_count = 0
     info_count = 0
@@ -11,13 +11,16 @@ def analyze_lines(lines):
         elif "INFO" in line:
             info_count += 1
 
-    return error_count, warning_count, info_count 
-def most_common_error(lines):
+    return error_count, warning_count, info_count
+
+
+def find_top_errors(lines):
     error_messages = {}
 
     for line in lines:
         if "ERROR" in line:
-            message = line.split("ERROR")[1].strip()
+            parts = line.split("ERROR", 1)
+            message = parts[1].strip() if len(parts) > 1 else "UNKNOWN"
 
             if message in error_messages:
                 error_messages[message] += 1
@@ -25,6 +28,12 @@ def most_common_error(lines):
                 error_messages[message] = 1
 
     if not error_messages:
-        return None
+        return []
 
-    return max(error_messages.items(), key=lambda x: x[1])[0]
+    sorted_errors = sorted(
+        error_messages.items(),
+        key=lambda item: item[1],
+        reverse=True
+    )
+
+    return sorted_errors[:3]
