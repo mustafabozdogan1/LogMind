@@ -1,6 +1,0 @@
-LogMind Analysis
-----------------
-ERROR: 2
-WARNING: 1
-INFO: 2
-Most common error: Database connection failed
